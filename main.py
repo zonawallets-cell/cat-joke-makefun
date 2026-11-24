@@ -64,11 +64,15 @@ def main():
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(text + "\n")
     # Read back what was written: the file on disk must be exactly the
-    # validated line plus its trailing newline, byte for byte.
+    # validated line plus its trailing newline, byte for byte, and a
+    # single line — a stray extra line would fail the gate even if the
+    # first line were right, so the count is checked too.
     with open(path, "rb") as f:
         written = f.read()
     if written != (text + "\n").encode("utf-8"):
         raise SystemExit("entry.txt on disk differs from the validated line")
+    if written.count(b"\n") != 1:
+        raise SystemExit("entry.txt must be exactly one line")
     print(text)
 
 
